@@ -1,3 +1,4 @@
+
 // Exportált függvények
 export function jelenitsdMegAdminFeluletet(): void {
     const adminElem = document.querySelector("#adminfelulet") as HTMLElement;
