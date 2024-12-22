@@ -1,4 +1,5 @@
-// Adminfelület megjelenítése
+const fodraszok = JSON.parse(localStorage.getItem("fodraszok") || "[]");
+
 export function jelenitsdMegAdminFeluletet(): void {
     const adminElem = document.querySelector("#adminfelulet") as HTMLElement;
 
@@ -8,16 +9,12 @@ export function jelenitsdMegAdminFeluletet(): void {
     }
 
     const foglalasok = JSON.parse(localStorage.getItem("foglalasok") || "[]");
-    const fodraszok = JSON.parse(localStorage.getItem("fodraszok") || "[]");
 
     const foglalasokCsoportositva: { [key: string]: string[] } = {};
     fodraszok.forEach((fodrasz: { nev: string }) => {
         foglalasokCsoportositva[fodrasz.nev] = foglalasok
-            .filter(
-                (foglalas: { fodrasz: string; idopont: string }) =>
-                    foglalas.fodrasz === fodrasz.nev
-            )
-            .map((foglalas: { fodrasz: string; idopont: string }) => foglalas.idopont);
+            .filter((foglalas: { fodrasz: string; idopont: string }) => foglalas.fodrasz === fodrasz.nev)
+            .map((foglalas: { idopont: string }) => foglalas.idopont);
     });
 
     adminElem.innerHTML = `
@@ -31,8 +28,11 @@ export function jelenitsdMegAdminFeluletet(): void {
                             idopontok.length > 0
                                 ? `<ul>${idopontok
                                       .map(
-                                          idopont =>
-                                              `<li>${idopont} <button onclick="toroldFoglalas('${fodraszNev}', '${idopont}')">Törlés</button></li>`
+                                          idopont => `
+                                            <li>
+                                                ${idopont}
+                                                <button class="torles-gomb" data-fodrasz="${fodraszNev}" data-idopont="${idopont}">Törlés</button>
+                                            </li>`
                                       )
                                       .join("")}</ul>`
                                 : "<p>Nincsenek foglalások.</p>"
@@ -43,26 +43,32 @@ export function jelenitsdMegAdminFeluletet(): void {
             .join("")}
         <button id="visszaFooldalra">Vissza a főoldalra</button>
     `;
+
+    document.querySelectorAll(".torles-gomb").forEach(gomb =>
+        gomb.addEventListener("click", (event) => {
+            const target = event.currentTarget as HTMLButtonElement;
+            const fodraszNev = target.getAttribute("data-fodrasz");
+            const idopont = target.getAttribute("data-idopont");
+            if (fodraszNev && idopont) toroldFoglalas(fodraszNev, idopont);
+        })
+    );
+
+    const visszaGomb = document.getElementById("visszaFooldalra");
+    visszaGomb?.addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
 }
 
-// Foglalás törlése
-export function toroldFoglalas(fodraszNev: string, idopont: string): void {
-    let foglalasok = JSON.parse(localStorage.getItem("foglalasok") || "[]");
-    foglalasok = foglalasok.filter(
+function toroldFoglalas(fodraszNev: string, idopont: string): void {
+    const foglalasok = JSON.parse(localStorage.getItem("foglalasok") || "[]");
+    const ujFoglalasok = foglalasok.filter(
         (foglalas: { fodrasz: string; idopont: string }) =>
             !(foglalas.fodrasz === fodraszNev && foglalas.idopont === idopont)
     );
-    localStorage.setItem("foglalasok", JSON.stringify(foglalasok));
+    localStorage.setItem("foglalasok", JSON.stringify(ujFoglalasok));
+    alert(`Foglalás törölve: ${fodraszNev}, ${idopont}`);
     jelenitsdMegAdminFeluletet();
 }
 
-// Visszatérés a főoldalra
-document.addEventListener("DOMContentLoaded", () => {
-    const visszaGomb = document.getElementById("visszaFooldalra");
-    if (visszaGomb) {
-        visszaGomb.addEventListener("click", () => {
-            window.location.href = "index.html";
-        });
-    }
-    jelenitsdMegAdminFeluletet();
-});
+// Oldal betöltésekor az admin felület megjelenítése
+document.addEventListener("DOMContentLoaded", jelenitsdMegAdminFeluletet);
