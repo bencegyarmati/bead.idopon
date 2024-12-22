@@ -1,10 +1,10 @@
 /* Alap stílusok */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    background-color: #f4f4f9;
+    background-color: #f9f9f9;
     color: #333;
 }
 
@@ -12,20 +12,22 @@ body {
 header {
     background-color: #4caf50;
     color: white;
-    padding: 1rem;
+    padding: 1.5rem 1rem;
     text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 header h1 {
     margin: 0;
-    font-size: 2rem;
+    font-size: 2.5rem;
 }
 
 /* Fő tartalom */
 main {
-    padding: 1rem;
+    padding: 2rem;
 }
 
+/* Fodrász lista szekció */
 #fodraszok {
     max-width: 1200px;
     margin: 0 auto;
@@ -33,43 +35,42 @@ main {
 }
 
 .fodrasz-lista {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
 }
 
 /* Fodrász box */
 .fodrasz-box {
     background-color: white;
     border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 300px;
-    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
+    padding: 1.5rem;
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .fodrasz-box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .fodrasz-box img {
-    width: 100%;
-    height: auto;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     margin-bottom: 1rem;
 }
 
 .fodrasz-box h3 {
     margin: 0.5rem 0;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
+    color: #222;
 }
 
 .fodrasz-box p {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #666;
     margin-bottom: 1rem;
 }
@@ -78,16 +79,91 @@ main {
     background-color: #4caf50;
     color: white;
     border: none;
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1.2rem;
     font-size: 1rem;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
 }
 
 .fodrasz-box button:hover {
     background-color: #45a049;
 }
+
+/* Vissza gomb */
+#vissza-gomb {
+    margin-top: 2rem;
+    padding: 0.8rem 1.5rem;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#vissza-gomb:hover {
+    background-color: #e53935;
+}
+
+/* Admin oldal */
+.admin-fodrasz {
+    margin-bottom: 2rem;
+}
+
+.admin-fodrasz h3 {
+    margin-bottom: 1rem;
+}
+
+.admin-fodrasz ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-fodrasz li {
+    padding: 0.5rem;
+    background-color: #f9f9f9;
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin-fodrasz li button {
+    margin-left: 1rem;
+    background-color: #f44336;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.admin-fodrasz li button {
+    background-color: #e53935;
+}
+button {
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
+}
+
+:root {
+    --bg-color: #ffffff;
+    --text-color: #333333;
+}
+
+[data-theme="dark"] {
+    --bg-color: #333333;
+    --text-color: #ffffff;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
 
 /* Lábléc */
 footer {
@@ -95,5 +171,5 @@ footer {
     color: white;
     text-align: center;
     padding: 1rem;
-    margin-top: 2rem;
+    margin-top: 3rem;
 }

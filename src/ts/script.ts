@@ -1,4 +1,3 @@
-
 // Fodrász interfész
 interface Fodrasz {
     nev: string;
@@ -53,75 +52,87 @@ function jelenitsdMegFodraszokat(): void {
     });
 }
 
-        // Eseménykezelő hozzáadása
-        function megjelenitIdopontFoglalas(fodrasz: Fodrasz): void {
-            const mainElem = document.querySelector("main") as HTMLElement;
-        
-            if (!mainElem) {
-                console.error("A main elem nem található!");
-                return;
-            }
-        
-            const szabadIdopontok = fodrasz.idopontok.filter(
-                idopont => !idopontFoglalt(fodrasz.nev, idopont)
-            );
-        
-            mainElem.innerHTML = `
-                <section id="idopontfoglalas">
-                    <h2>${fodrasz.nev} időpontfoglalás</h2>
-                    <p>${fodrasz.leiras}</p>
-                    <ul>
-                        ${
-                            szabadIdopontok.length > 0
-                                ? szabadIdopontok
-                                      .map(
-                                          idopont => `
-                                    <li>
-                                        <button class="foglalas-idopont-gomb" data-idopont="${idopont}">${idopont}</button>
-                                    </li>
-                                `
-                                      )
-                                      .join("")
-                                : "<li>Nincsenek elérhető időpontok.</li>"
-                        }
-                    </ul>
-                    <button id="vissza-gomb">Vissza</button>
-                </section>
-            `;
-        
-            // Eseménykezelő hozzáadása az időpont gombokhoz
-            const idopontGombok = document.querySelectorAll(".foglalas-idopont-gomb");
-            idopontGombok.forEach(gomb => {
-                gomb.addEventListener("click", (event) => {
-                    const target = event.currentTarget as HTMLButtonElement;
-                    const idopont = target.getAttribute("data-idopont");
-        
-                    if (idopont) {
-                        foglalIdopont(fodrasz.nev, idopont);
-                    }
-                });
-            });
-        
-            // Vissza gomb kezelése
-            const visszaGomb = document.getElementById("vissza-gomb");
-            if (visszaGomb) {
-                visszaGomb.addEventListener("click", vissza);
-            }
-        }
-        
+// Időpontfoglalás felület megjelenítése
+function megjelenitIdopontFoglalas(fodrasz: Fodrasz): void {
+    const mainElem = document.querySelector("main") as HTMLElement;
 
-// Ellenőrzi, hogy az adott időpont foglalt-e
-function idopontFoglalt(fodraszNev: string, idopont: string): boolean {
-    // Itt kellene implementálni az időpont foglaltságának ellenőrzését
-    // Például ellenőrizheti egy adatbázisban vagy egy tömbben
-    return false; // Például mindig szabadnak jelzi az időpontokat
+    if (!mainElem) {
+        console.error("A main elem nem található!");
+        return;
+    }
+
+    const szabadIdopontok = fodrasz.idopontok.filter(
+        idopont => !idopontFoglalt(fodrasz.nev, idopont)
+    );
+
+    mainElem.innerHTML = `
+        <section id="idopontfoglalas">
+            <h2>${fodrasz.nev} időpontfoglalás</h2>
+            <p>${fodrasz.leiras}</p>
+            <ul>
+                ${
+                    szabadIdopontok.length > 0
+                        ? szabadIdopontok
+                              .map(
+                                  idopont => `
+                            <li>
+                                <button class="foglalas-idopont-gomb" data-idopont="${idopont}">${idopont}</button>
+                            </li>
+                        `
+                              )
+                              .join("")
+                        : "<li>Nincsenek elérhető időpontok.</li>"
+                }
+            </ul>
+            <button id="vissza-gomb">Vissza</button>
+        </section>
+    `;
+
+    // Eseménykezelő hozzáadása az időpont gombokhoz
+    const idopontGombok = document.querySelectorAll(".foglalas-idopont-gomb");
+    idopontGombok.forEach(gomb => {
+        gomb.addEventListener("click", (event) => {
+            const target = event.currentTarget as HTMLButtonElement;
+            const idopont = target.getAttribute("data-idopont");
+
+            if (idopont) {
+                foglalIdopont(fodrasz.nev, idopont);
+            }
+        });
+    });
+
+    // Vissza gomb kezelése
+    const visszaGomb = document.getElementById("vissza-gomb");
+    if (visszaGomb) {
+        visszaGomb.addEventListener("click", vissza);
+    }
 }
 
-// Foglalja az adott időpontot a megadott fodrászhoz
+// Ellenőrzés, hogy az adott időpont foglalt-e
+function idopontFoglalt(fodraszNev: string, idopont: string): boolean {
+    const foglalasok = JSON.parse(localStorage.getItem("foglalasok") || "[]");
+    return foglalasok.some(
+        (foglalas: { fodrasz: string; idopont: string }) =>
+            foglalas.fodrasz === fodraszNev && foglalas.idopont === idopont
+    );
+}
+
+// Foglalások mentése
+function mentsIdopont(fodraszNev: string, idopont: string): void {
+    const foglalasok = JSON.parse(localStorage.getItem("foglalasok") || "[]");
+    foglalasok.push({ fodrasz: fodraszNev, idopont });
+    localStorage.setItem("foglalasok", JSON.stringify(foglalasok));
+}
+
+// Foglalás kezelése
 function foglalIdopont(fodraszNev: string, idopont: string): void {
-    // Itt kellene implementálni az időpont foglalását
-    // Például hozzáadhatja egy adatbázishoz vagy egy tömbhöz
-    console.log(`Időpont foglalva: ${fodraszNev} - ${idopont}`);
+    if (idopontFoglalt(fodraszNev, idopont)) {
+        alert(`Ez az időpont már foglalt: ${idopont}`);
+        return;
+    }
+    mentsIdopont(fodraszNev, idopont);
+    alert(`${fodraszNev} számára lefoglalt időpont: ${idopont}`);
+    vissza();
 }
 
 // Visszatérés a főoldalra

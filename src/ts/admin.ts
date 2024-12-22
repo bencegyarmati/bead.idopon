@@ -1,5 +1,4 @@
-
-// Exportált függvények
+// Adminfelület megjelenítése
 export function jelenitsdMegAdminFeluletet(): void {
     const adminElem = document.querySelector("#adminfelulet") as HTMLElement;
 
@@ -26,25 +25,27 @@ export function jelenitsdMegAdminFeluletet(): void {
         ${Object.entries(foglalasokCsoportositva)
             .map(
                 ([fodraszNev, idopontok]) => `
-                <div class="admin-fodrasz">
-                    <h3>${fodraszNev}</h3>
-                    ${
-                        idopontok.length > 0
-                            ? `<ul>${idopontok
-                                  .map(
-                                      idopont =>
-                                          `<li>${idopont} <button onclick="toroldFoglalas('${fodraszNev}', '${idopont}')">Törlés</button></li>`
-                                  )
-                                  .join("")}</ul>`
-                            : "<p>Nincsenek foglalások.</p>"
-                    }
-                </div>
-            `
+                    <div class="admin-fodrasz">
+                        <h3>${fodraszNev}</h3>
+                        ${
+                            idopontok.length > 0
+                                ? `<ul>${idopontok
+                                      .map(
+                                          idopont =>
+                                              `<li>${idopont} <button onclick="toroldFoglalas('${fodraszNev}', '${idopont}')">Törlés</button></li>`
+                                      )
+                                      .join("")}</ul>`
+                                : "<p>Nincsenek foglalások.</p>"
+                        }
+                    </div>
+                `
             )
             .join("")}
+        <button id="visszaFooldalra">Vissza a főoldalra</button>
     `;
 }
 
+// Foglalás törlése
 export function toroldFoglalas(fodraszNev: string, idopont: string): void {
     let foglalasok = JSON.parse(localStorage.getItem("foglalasok") || "[]");
     foglalasok = foglalasok.filter(
@@ -54,3 +55,14 @@ export function toroldFoglalas(fodraszNev: string, idopont: string): void {
     localStorage.setItem("foglalasok", JSON.stringify(foglalasok));
     jelenitsdMegAdminFeluletet();
 }
+
+// Visszatérés a főoldalra
+document.addEventListener("DOMContentLoaded", () => {
+    const visszaGomb = document.getElementById("visszaFooldalra");
+    if (visszaGomb) {
+        visszaGomb.addEventListener("click", () => {
+            window.location.href = "index.html";
+        });
+    }
+    jelenitsdMegAdminFeluletet();
+});
